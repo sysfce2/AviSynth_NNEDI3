@@ -1,7 +1,7 @@
                                                                                                     |
                                 nnedi3 for Avisynth by tritical                                     |
                                        modified by JPSDR                                            |
-                                     v0.9.4.67 (24/07/2025)                                         |
+                                     v0.9.4.68 (24/07/2025)                                         |
                                            HELP FILE                                                |
 -----------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------
@@ -411,6 +411,9 @@ nnedi3_rpow2 EXAMPLES:
 
 
 CHANGE LIST:
+   04/09/2025  v0.9.4.68
+       * Use nullptr instead of NULL.
+
    24/07/2025  v0.9.4.67
        + Add more AVX512 code path, some fixes on asm and a long existing crash.
 
