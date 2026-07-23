@@ -1307,9 +1307,12 @@ PVideoFrame __stdcall nnedi3::GetFrame(int n, IScriptEnvironment *env)
 	if (threads_number>1)
 	{
 		for (uint8_t i=0; i<threads_number; i++)
-			MT_Thread[i].f_process= f_proc_2;
+			MT_Thread[i].f_process=f_proc_2;
 		
 		if (poolInterface->StartThreads(UserId)) poolInterface->WaitThreadsEnd(UserId);
+
+		for (uint8_t i=0; i<threads_number; i++)
+			MT_Thread[i].f_process=0;
 
 		poolInterface->ReleaseThreadPool(UserId,sleep);
 	}
