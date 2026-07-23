@@ -1050,11 +1050,20 @@ nnedi3::nnedi3(PClip _child,int _field,bool _dh,bool _Y,bool _U,bool _V,bool _A,
 	
 	int hslice[PLANE_MAX],hremain[PLANE_MAX];
 	int srow[PLANE_MAX] = {6,6,6,6};
+	int TabSlice[PLANE_MAX][MAX_MT_THREADS];
+	
 	for (int i=0; i<PlaneMax; i++)
 	{
 		const int height = srcPF->GetHeight(i)-12;
+
 		hslice[i] = height/(int)threads_number;
 		hremain[i] = height%(int)threads_number;
+		
+		// Balance threads
+		for (int j=0; j<(int)threads_number; j++)
+			TabSlice[i][j]=hslice[i];
+		for (int j=0; j<hremain[i]; j++)
+			TabSlice[i][j]++;
 	}
 
 	int NNPixels_pitch[PLANE_MAX];
@@ -1122,7 +1131,8 @@ nnedi3::nnedi3(PClip _child,int _field,bool _dh,bool _Y,bool _U,bool _V,bool _A,
 			pssInfo[i].height[b] = srcPF->GetHeight(b);
 			pssInfo[i].width[b] = srcPF->GetWidth(b);
 			pssInfo[i].sheight[b] = srow[b];
-			srow[b] += i == 0 ? hslice[b]+hremain[b] : hslice[b];
+			//srow[b] += i == 0 ? hslice[b]+hremain[b] : hslice[b];
+			srow[b] += TabSlice[b][i];
 			pssInfo[i].eheight[b] = srow[b];
 			pssInfo[i].plane_range[b] = plane_range[b];
 		}
