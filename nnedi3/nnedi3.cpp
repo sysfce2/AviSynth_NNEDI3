@@ -1,5 +1,5 @@
 /*
-**                    nnedi3 v0.9.4.68 for Avs+/Avisynth 2.6.x
+**                    nnedi3 v0.9.4.69 for Avs+/Avisynth 2.6.x
 **
 **   Copyright (C) 2010-2011 Kevin Stone
 **
@@ -1217,6 +1217,8 @@ PVideoFrame __stdcall nnedi3::GetFrame(int n, IScriptEnvironment *env)
 	
 	const uint8_t PlaneMax=(grey) ? 1:(isAlphaChannel) ? 4:3;
 	int plane[4];
+	
+	CurrentPlaneMax=PlaneMax;
 
 	if (isRGBPfamily)
 	{
@@ -1268,14 +1270,8 @@ PVideoFrame __stdcall nnedi3::GetFrame(int n, IScriptEnvironment *env)
 	{
 		if (!poolInterface->RequestThreadPool(UserId,threads_number,MT_Thread,-1,false))
 			env->ThrowError("nnedi3: Error with the TheadPool while requesting threadpool !");
-
-		for (uint8_t b=0; b<PlaneMax; b++)
-		{
-			for (uint8_t i=0; i<threads_number; i++)
-				pssInfo[i].current_plane=b;
-
-			if (poolInterface->StartThreads(UserId)) poolInterface->WaitThreadsEnd(UserId);
-		}
+		
+		if (poolInterface->StartThreads(UserId)) poolInterface->WaitThreadsEnd(UserId);
 	}
 	else
 	{
@@ -1302,7 +1298,7 @@ PVideoFrame __stdcall nnedi3::GetFrame(int n, IScriptEnvironment *env)
 					evalFunc_1_32(pssInfo);
 				}
 				break;
-			default : ;
+			default : break;
 		}
 	}
 	
@@ -1312,14 +1308,8 @@ PVideoFrame __stdcall nnedi3::GetFrame(int n, IScriptEnvironment *env)
 	{
 		for (uint8_t i=0; i<threads_number; i++)
 			MT_Thread[i].f_process= f_proc_2;
-
-		for (uint8_t b=0; b<PlaneMax; b++)
-		{
-			for (uint8_t i=0; i<threads_number; i++)
-				pssInfo[i].current_plane=b;
-
-			if (poolInterface->StartThreads(UserId)) poolInterface->WaitThreadsEnd(UserId);
-		}
+		
+		if (poolInterface->StartThreads(UserId)) poolInterface->WaitThreadsEnd(UserId);
 
 		poolInterface->ReleaseThreadPool(UserId,sleep);
 	}
@@ -1348,7 +1338,7 @@ PVideoFrame __stdcall nnedi3::GetFrame(int n, IScriptEnvironment *env)
 					evalFunc_2_32(pssInfo);
 				}
 				break;
-			default :;
+			default : break;
 		}
 	}
 	
@@ -3871,23 +3861,54 @@ void nnedi3::StaticThreadpool(void *ptr)
 {
 	const Public_MT_Data_Thread *data=(const Public_MT_Data_Thread *)ptr;
 	nnedi3 *ptrClass=(nnedi3 *)data->pClass;
-	void *ps = &(ptrClass->pssInfo[data->thread_Id]);
+	PS_INFO *ps = &(ptrClass->pssInfo[data->thread_Id]);
+	const uint8_t PlaneMax=ptrClass->CurrentPlaneMax;
 	
 	switch(data->f_process)
 	{
-		case 1 : evalFunc_1(ps);
+		case 1 :
+			for (uint8_t b=0; b<PlaneMax; b++)
+			{
+				ps->current_plane=b;
+				evalFunc_1(ps);
+			}
 			break;
-		case 2 : evalFunc_2(ps);
+		case 2 :
+			for (uint8_t b=0; b<PlaneMax; b++)
+			{
+				ps->current_plane=b;
+				evalFunc_2(ps);
+			}
 			break;
-		case 3 : evalFunc_1_16(ps);
+		case 3 :
+			for (uint8_t b=0; b<PlaneMax; b++)
+			{
+				ps->current_plane=b;
+				evalFunc_1_16(ps);
+			}
 			break;
-		case 4 : evalFunc_2_16(ps);
+		case 4 :
+			for (uint8_t b=0; b<PlaneMax; b++)
+			{
+				ps->current_plane=b;
+				evalFunc_2_16(ps);
+			}
 			break;
-		case 5 : evalFunc_1_32(ps);
+		case 5 :
+			for (uint8_t b=0; b<PlaneMax; b++)
+			{
+				ps->current_plane=b;
+				evalFunc_1_32(ps);
+			}
 			break;
-		case 6 : evalFunc_2_32(ps);
+		case 6 :
+			for (uint8_t b=0; b<PlaneMax; b++)
+			{
+				ps->current_plane=b;
+				evalFunc_2_32(ps);
+			}
 			break;
-		default : ;
+		default : break;
 	}
 }
 
