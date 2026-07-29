@@ -146,7 +146,6 @@ extern "C" void weightedAvgElliottMul5_m16_AVX(const float *w,const int n,float 
 extern "C" void uc2s64_AVX(const uint8_t *t,const int pitch,float *p);
 extern "C" void computeNetwork0new_AVX(const float *datai,const float *weights,uint8_t *d);
 
-
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
 #define myfree(ptr) if (ptr!=nullptr) { free(ptr); ptr=nullptr;}
