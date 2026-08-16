@@ -412,7 +412,7 @@ nnedi3_rpow2 EXAMPLES:
 
 CHANGE LIST:
    15/08/2026  v0.9.4.69
-       * Some asm and multithreading improvements, some AVX-512 bug and crash fixes.
+       * Some asm and multithreading improvements, some AVX-512 bug and crash fixes, update avs header.
 
    04/09/2025  v0.9.4.68
        * Use nullptr instead of NULL.
